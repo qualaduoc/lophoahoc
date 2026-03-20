@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Custom Chemistry theme colors */
+@theme {
+  --color-chemistry-blue: #e0f2fe;
+  --color-chemistry-green: #dcfce7;
+  --color-chemistry-dark: #0f172a;
+  --color-chemistry-primary: #0284c7;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.3",
+    "3dmol": "^2.5.4",
     "date-fns": "^4.1.0",
     "ketcher-core": "^3.12.0",
     "ketcher-react": "^3.12.0",

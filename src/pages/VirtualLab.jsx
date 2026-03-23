@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { REACTIONS_DATA } from '../lib/chemData';
 import { MOL_DATA, REACTION_PRODUCTS } from '../lib/molData';
+import { MOL_DATA_3D } from '../lib/molData3D';
 import { loadChemDoodle } from '../lib/chemdoodleLoader';
+import { fetchMol3D } from '../lib/pubchemService';
+import MolView3D from '../components/MolView3D';
 import 'ketcher-react/dist/index.css';
 
 /* ═══════════════════════════════════════════════════
@@ -270,12 +273,136 @@ const ReactionDisplay = ({ reaction, phase }) => {
 };
 
 /* ═══════════════════════════════════════════════════
+   3D VIEWER PANEL — PubChem-powered, shows products
+   Completely isolated from 2D ChemDoodle system
+   ═══════════════════════════════════════════════════ */
+const Viewer3DPanel = ({ reaction, phase }) => {
+  const [molDataMap, setMolDataMap] = useState({});
+  const [loadingMap, setLoadingMap] = useState({});
+  const reactionKey = `${reaction.reactantA}+${reaction.reactantB}`;
+  const products = REACTION_PRODUCTS[reactionKey] || [];
+  const isDone = phase === 'done';
+
+  // All molecules needed (reactants + products)
+  const allFormulas = useMemo(() => {
+    const formulas = [reaction.reactantA, reaction.reactantB, ...products];
+    return [...new Set(formulas)];
+  }, [reaction.reactantA, reaction.reactantB, products]);
+
+  // Fetch 3D data for all molecules
+  useEffect(() => {
+    allFormulas.forEach((formula) => {
+      // Already have data (static or fetched)
+      if (molDataMap[formula] || loadingMap[formula]) return;
+
+      // Try static data first
+      if (MOL_DATA_3D[formula]) {
+        setMolDataMap((prev) => ({ ...prev, [formula]: { data: MOL_DATA_3D[formula], source: 'local' } }));
+        return;
+      }
+
+      // Fetch from PubChem
+      setLoadingMap((prev) => ({ ...prev, [formula]: true }));
+      fetchMol3D(formula).then((data) => {
+        setMolDataMap((prev) => ({
+          ...prev,
+          [formula]: data ? { data, source: 'pubchem' } : null,
+        }));
+        setLoadingMap((prev) => ({ ...prev, [formula]: false }));
+      });
+    });
+  }, [allFormulas]);
+
+  const renderMol3D = (formula, label, size = 160, highlight = false) => {
+    const entry = molDataMap[formula];
+    const isLoading = loadingMap[formula];
+
+    if (isLoading) {
+      return (
+        <div className="flex flex-col items-center">
+          <div style={{ width: size, height: size }}
+            className="rounded-xl border-2 border-gray-600 bg-gray-800 flex flex-col items-center justify-center gap-2">
+            <span className="text-white/60 animate-pulse text-lg">⏳</span>
+            <span className="text-[10px] text-white/40 animate-pulse">Đang tải từ PubChem...</span>
+          </div>
+          {label && <p className="text-xs font-black mt-1.5 text-center text-white/70" style={{ maxWidth: size }}>{label}</p>}
+        </div>
+      );
+    }
+
+    if (!entry || !entry.data) {
+      return (
+        <div className="flex flex-col items-center">
+          <div style={{ width: size, height: size }}
+            className="rounded-xl border-2 border-gray-600 bg-gray-800 flex flex-col items-center justify-center gap-1">
+            <span className="text-2xl font-black text-white/50">{formula}</span>
+            <span className="text-[9px] text-white/30">Chưa có dữ liệu 3D</span>
+          </div>
+          {label && <p className="text-xs font-black mt-1.5 text-center text-white/70" style={{ maxWidth: size }}>{label}</p>}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col items-center">
+        <MolView3D molData={entry.data} label={label} size={size} highlight={highlight} />
+        <span className={`text-[8px] mt-0.5 ${entry.source === 'pubchem' ? 'text-cyan-400/60' : 'text-white/30'}`}>
+          {entry.source === 'pubchem' ? '🌐 PubChem' : '💾 Local'}
+        </span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-4 bg-gradient-to-b from-[#1a1a2e] to-[#16213e]">
+      {/* Reactants */}
+      <div className="flex items-center justify-center gap-4 flex-wrap">
+        {renderMol3D(reaction.reactantA, reaction.reactantAName, 160)}
+        <div className="text-2xl text-white/50 font-black select-none">+</div>
+        {renderMol3D(reaction.reactantB, reaction.reactantBName, 160)}
+      </div>
+
+      {/* Products — shown after reaction completes */}
+      {isDone && products.length > 0 && (
+        <div className="mt-4 cd-fade-in">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-xs font-black text-cyan-400/80 uppercase tracking-wider flex items-center gap-1.5">
+              ⚡ Sản phẩm phản ứng
+            </span>
+            <div className="h-px flex-1 bg-white/10" />
+          </div>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            {products.map((p, i) => (
+              <React.Fragment key={p}>
+                {i > 0 && <span className="text-lg text-white/30 font-bold">+</span>}
+                {renderMol3D(p, p, 140, true)}
+              </React.Fragment>
+            ))}
+          </div>
+          {/* Equation */}
+          <div className="mt-3 bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+            <p className="text-center text-sm font-bold text-white/70">{reaction.equation}</p>
+          </div>
+        </div>
+      )}
+
+      <p className="text-center text-[10px] text-white/40 mt-3">
+        Kéo chuột để xoay · Cuộn để zoom · Hover nút 📷 để xuất PNG
+        {isDone ? '' : ' · Bấm "Tiến hành phản ứng" để xem sản phẩm 3D'}
+      </p>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════
    MAIN VIRTUAL LAB
    ═══════════════════════════════════════════════════ */
 export const VirtualLab = () => {
   const [selectedReaction, setSelectedReaction] = useState(0);
   const [phase, setPhase] = useState('idle');
   const [showSketcher, setShowSketcher] = useState(false);
+  const [show3D, setShow3D] = useState(false);
   const timerRef = useRef(null);
 
   const reaction = REACTIONS_DATA[selectedReaction];
@@ -302,11 +429,11 @@ export const VirtualLab = () => {
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   return (
-    <div>
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        {/* LEFT: Lab */}
-        <div className="lg:col-span-3">
-          {/* Main Lab */}
+    <div className="space-y-3">
+      {/* ROW 1: Lab 2D + Controls */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+        {/* LEFT: Lab 2D */}
+        <div className="lg:col-span-7">
           <div className="border-2 border-os-border rounded-lg overflow-hidden">
             <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-2 flex items-center justify-between">
               <h3 className="text-xs font-black text-os-text uppercase tracking-wider">
@@ -321,41 +448,25 @@ export const VirtualLab = () => {
             </div>
             <ReactionDisplay reaction={reaction} phase={phase} />
           </div>
-
-          {/* Sketcher Toggle */}
-          <div className="mt-3 border-2 border-os-border rounded-lg overflow-hidden">
-            <button onClick={() => setShowSketcher(!showSketcher)}
-              className="w-full bg-os-titlebar border-b-2 border-os-border px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-os-bg transition-colors">
-              <h3 className="text-xs font-black text-os-text uppercase tracking-wider">
-                ✏️ Bảng vẽ phân tử (Ketcher)
-              </h3>
-              <span className="text-os-text-muted text-xs">{showSketcher ? '▲ Ẩn' : '▼ Mở'}</span>
-            </button>
-            {showSketcher && (
-              <div className="bg-white" style={{ height: 450 }}>
-                <KetcherEditor />
-              </div>
-            )}
-          </div>
         </div>
 
-        {/* RIGHT: Controls */}
-        <div className="lg:col-span-2 space-y-3">
+        {/* RIGHT: Controls — compact */}
+        <div className="lg:col-span-5 space-y-3">
           {/* Reaction Selector */}
           <div className="border-2 border-os-border rounded-lg overflow-hidden">
-            <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-2">
+            <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-1.5">
               <h3 className="text-xs font-black text-os-text uppercase tracking-wider">⚗️ Chọn thí nghiệm</h3>
             </div>
-            <div className="p-2 max-h-[300px] overflow-y-auto retro-body">
+            <div className="p-1.5 max-h-[220px] overflow-y-auto retro-body">
               {REACTIONS_DATA.map((r, i) => (
                 <button key={i} onClick={() => handleSelect(i)}
-                  className={`w-full text-left p-2.5 rounded-lg border-2 mb-1 transition-all cursor-pointer ${
+                  className={`w-full text-left p-2 rounded-lg border-2 mb-1 transition-all cursor-pointer ${
                     selectedReaction === i
                       ? 'bg-os-accent/10 border-os-accent shadow-sm'
                       : 'border-transparent hover:bg-os-bg hover:border-os-border'
                   }`}>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{r.visual?.emoji || '🧪'}</span>
+                    <span className="text-base">{r.visual?.emoji || '🧪'}</span>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-[11px] text-os-text truncate">{r.reactantA} + {r.reactantB}</p>
                       <p className="text-[9px] text-os-text-muted truncate">{r.equation}</p>
@@ -367,41 +478,75 @@ export const VirtualLab = () => {
             </div>
           </div>
 
-          {/* Reagent Info */}
+          {/* Reagent Info — inline compact */}
           <div className="border-2 border-os-border rounded-lg overflow-hidden">
-            <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-2">
+            <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-1.5">
               <h3 className="text-xs font-black text-os-text uppercase tracking-wider">📋 Chất phản ứng</h3>
             </div>
-            <div className="p-3 space-y-2">
-              <div className="flex items-center gap-2 p-2 bg-os-bg-light rounded-lg border border-os-border/50">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                  style={{ background: reaction.visual?.colorA || '#e0e0e0', border: '1px solid #0002' }}>A</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] font-black text-os-text-muted uppercase">Chất A</p>
-                  <p className="text-[11px] font-bold text-os-text truncate">{reaction.reactantAName}</p>
+            <div className="p-2 space-y-1.5">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-2 p-1.5 bg-os-bg-light rounded-lg border border-os-border/50">
+                  <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
+                    style={{ background: reaction.visual?.colorA || '#e0e0e0', border: '1px solid #0002' }}>A</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[9px] font-black text-os-text-muted uppercase">Chất A</p>
+                    <p className="text-[10px] font-bold text-os-text truncate">{reaction.reactantAName}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-center text-os-text-muted text-xl font-bold">+</div>
-              <div className="flex items-center gap-2 p-2 bg-os-bg-light rounded-lg border border-os-border/50">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                  style={{ background: reaction.visual?.colorB || '#e0e0e0', border: '1px solid #0002' }}>B</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] font-black text-os-text-muted uppercase">Chất B</p>
-                  <p className="text-[11px] font-bold text-os-text truncate">{reaction.reactantBName}</p>
+                <div className="flex items-center gap-2 p-1.5 bg-os-bg-light rounded-lg border border-os-border/50">
+                  <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
+                    style={{ background: reaction.visual?.colorB || '#e0e0e0', border: '1px solid #0002' }}>B</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[9px] font-black text-os-text-muted uppercase">Chất B</p>
+                    <p className="text-[10px] font-bold text-os-text truncate">{reaction.reactantBName}</p>
+                  </div>
                 </div>
               </div>
 
               <button onClick={handleReact} disabled={phase !== 'idle'}
-                className={`w-full retro-btn retro-btn-primary py-3 text-sm flex items-center justify-center gap-2 mt-1.5 ${phase !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                className={`w-full retro-btn retro-btn-primary py-2.5 text-sm flex items-center justify-center gap-2 ${phase !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 {phase === 'idle' ? '⚗️ Tiến Hành Phản Ứng' :
                  phase === 'pouring' ? '🫗 Đang trộn...' :
                  phase === 'reacting' ? '⏳ Đang phản ứng...' : '✅ Hoàn thành!'}
               </button>
               {phase !== 'idle' && (
-                <button onClick={handleReset} className="w-full retro-btn py-2 text-sm">🔄 Thí nghiệm lại</button>
+                <button onClick={handleReset} className="w-full retro-btn py-1.5 text-sm">🔄 Thí nghiệm lại</button>
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ROW 2: 3D Viewer + Ketcher side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {/* 3D Viewer */}
+        <div className="border-2 border-os-border rounded-lg overflow-hidden">
+          <button onClick={() => setShow3D(!show3D)}
+            className="w-full bg-os-titlebar border-b-2 border-os-border px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-os-bg transition-colors">
+            <h3 className="text-xs font-black text-os-text uppercase tracking-wider">
+              🧊 Xem phân tử 3D (WebGL)
+            </h3>
+            <span className="text-os-text-muted text-xs">{show3D ? '▲ Ẩn' : '▼ Mở'}</span>
+          </button>
+          {show3D && (
+            <Viewer3DPanel reaction={reaction} phase={phase} />
+          )}
+        </div>
+
+        {/* Ketcher */}
+        <div className="border-2 border-os-border rounded-lg overflow-hidden">
+          <button onClick={() => setShowSketcher(!showSketcher)}
+            className="w-full bg-os-titlebar border-b-2 border-os-border px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-os-bg transition-colors">
+            <h3 className="text-xs font-black text-os-text uppercase tracking-wider">
+              ✏️ Bảng vẽ phân tử (Ketcher)
+            </h3>
+            <span className="text-os-text-muted text-xs">{showSketcher ? '▲ Ẩn' : '▼ Mở'}</span>
+          </button>
+          {showSketcher && (
+            <div className="bg-white" style={{ height: 450 }}>
+              <KetcherEditor />
+            </div>
+          )}
         </div>
       </div>
     </div>

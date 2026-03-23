@@ -1,10 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>lophoahoc</title>
+    <meta name="description" content="ChemEd - Nền tảng học Hóa học trực tuyến thông minh. Phòng thí nghiệm ảo, bảng tuần hoàn tương tác, bài tập & kiểm tra online." />
+    <meta name="theme-color" content="#0284c7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>ChemEd — Nền tảng học Hóa học thông minh</title>
+    <!-- Polyfill for Node globals needed by Ketcher/Miew under Vite -->
+    <script>
+      window.global = window;
+      window.process = { env: {} };
+      window.Buffer = window.Buffer || [];
+    </script>
+    <!-- ChemDoodle Web Components -->
+    <link rel="stylesheet" href="/chemdoodle/ChemDoodleWeb.css" />
   </head>
   <body>
     <div id="root"></div>

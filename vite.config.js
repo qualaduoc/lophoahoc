@@ -1,10 +1,30 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import fs from 'fs'
+import path from 'path'
 
 export default defineConfig({
   plugins: [
     react(),
+    // Serve ChemDoodle JS as raw file without ESM transform
+    {
+      name: 'chemdoodle-raw',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          if (req.url && req.url.includes('/chemdoodle/') && req.url.endsWith('.js')) {
+            const filePath = path.join(process.cwd(), 'public', req.url);
+            if (fs.existsSync(filePath)) {
+              res.setHeader('Content-Type', 'application/javascript');
+              res.setHeader('Cache-Control', 'no-cache');
+              fs.createReadStream(filePath).pipe(res);
+              return;
+            }
+          }
+          next();
+        });
+      }
+    },
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',

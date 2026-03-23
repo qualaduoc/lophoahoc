@@ -1,18 +1,245 @@
 @import "tailwindcss";
 
-/* Custom Chemistry theme colors */
+/* ===== ChemEd OS - Retro Desktop Theme ===== */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @theme {
-  --color-chemistry-blue: #e0f2fe;
-  --color-chemistry-green: #dcfce7;
-  --color-chemistry-dark: #0f172a;
-  --color-chemistry-primary: #0284c7;
+  --color-os-bg: #F5E6C8;
+  --color-os-bg-light: #FDF6EC;
+  --color-os-border: #C4A882;
+  --color-os-border-dark: #8B7355;
+  --color-os-titlebar: #D4C4A8;
+  --color-os-window: #FFFEF7;
+  --color-os-accent: #4A7B7C;
+  --color-os-accent-light: #86CCCA;
+  --color-os-warm: #D4A574;
+  --color-os-pink: #E8B4B8;
+  --color-os-green: #7FB069;
+  --color-os-red: #D35F5F;
+  --color-os-blue: #4A90D9;
+  --color-os-yellow: #F0C75E;
+  --color-os-text: #3D3024;
+  --color-os-text-muted: #8B7355;
+  --color-os-taskbar: #D4C4A8;
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+/* Base */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-os-bg);
+  color: var(--color-os-text);
+  overflow: hidden;
+}
+
+/* Retro Desktop Background Pattern */
+.desktop-bg {
+  background-color: var(--color-os-bg);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(134,204,202,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(212,165,116,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(232,180,184,0.1) 0%, transparent 40%);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Desktop Icon */
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  width: 100px;
+}
+.desktop-icon:hover {
+  background: rgba(74,123,124, 0.12);
+}
+.desktop-icon:active {
+  background: rgba(74,123,124, 0.22);
+  transform: scale(0.96);
+}
+.desktop-icon .icon-img {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 28px;
+  transition: transform 0.2s;
+}
+.desktop-icon:hover .icon-img {
+  transform: scale(1.08);
+}
+.desktop-icon .icon-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-os-text);
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+}
+
+/* ===== Retro Window Frame ===== */
+.retro-window {
+  background: var(--color-os-window);
+  border: 2px solid var(--color-os-border);
+  border-radius: 12px;
+  box-shadow:
+    4px 4px 0px var(--color-os-border),
+    inset 0 0 0 1px rgba(255,255,255,0.5);
+  overflow: hidden;
+}
+.retro-titlebar {
+  background: linear-gradient(180deg, #E8D9C0, #D4C4A8);
+  border-bottom: 2px solid var(--color-os-border);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+  user-select: none;
+}
+.retro-titlebar .title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-os-text);
+  font-family: 'JetBrains Mono', monospace;
+}
+.retro-titlebar .window-controls {
+  display: flex;
+  gap: 6px;
+}
+.retro-titlebar .window-controls span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+.retro-titlebar .window-controls .close-btn { background: var(--color-os-red); }
+.retro-titlebar .window-controls .min-btn { background: var(--color-os-yellow); }
+.retro-titlebar .window-controls .max-btn { background: var(--color-os-green); }
+
+.retro-body {
+  padding: 16px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+
+/* ===== Taskbar ===== */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: linear-gradient(180deg, #E8D9C0, var(--color-os-taskbar));
+  border-top: 2px solid var(--color-os-border);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  z-index: 1000;
+  gap: 4px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+.taskbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1.5px solid transparent;
+  color: var(--color-os-text);
+}
+.taskbar-btn:hover {
+  background: rgba(255,255,255,0.4);
+  border-color: var(--color-os-border);
+}
+.taskbar-btn.active {
+  background: rgba(255,255,255,0.6);
+  border-color: var(--color-os-border);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Toast animation */
+@keyframes slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Retro scrollbar */
+.retro-body::-webkit-scrollbar {
+  width: 12px;
+}
+.retro-body::-webkit-scrollbar-track {
+  background: #E8D9C0;
+  border-left: 1px solid var(--color-os-border);
+}
+.retro-body::-webkit-scrollbar-thumb {
+  background: var(--color-os-border);
+  border: 2px solid #E8D9C0;
+  border-radius: 6px;
+}
+.retro-body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-os-border-dark);
+}
+
+/* Retro input */
+.retro-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--color-os-border);
+  border-radius: 8px;
+  background: #FFFEF7;
+  font-size: 14px;
+  color: var(--color-os-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.retro-input:focus {
+  border-color: var(--color-os-accent);
+  box-shadow: 0 0 0 3px rgba(74,123,124,0.15);
+}
+
+/* Retro button */
+.retro-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--color-os-border);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #FFFEF7, #E8D9C0);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-os-text);
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 2px 2px 0px var(--color-os-border);
+}
+.retro-btn:hover {
+  background: linear-gradient(180deg, #FFF, #F0E4CE);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--color-os-border);
+}
+.retro-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--color-os-border);
+}
+.retro-btn-primary {
+  background: linear-gradient(180deg, var(--color-os-accent-light), var(--color-os-accent));
+  color: white;
+  border-color: #3A6B6C;
+}
+.retro-btn-primary:hover {
+  background: linear-gradient(180deg, #96DCD9, #3A6B6C);
 }

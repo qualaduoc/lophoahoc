@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'sonner';
 import {
   LayoutDashboard, Users, PlusCircle, ClipboardCheck, AlertTriangle,
   ChevronRight, Trash2, Save, Eye, EyeOff, X, MessageSquare, Check
@@ -196,8 +197,8 @@ const CreateAssignmentTab = () => {
   };
 
   const handleSave = async () => {
-    if (!form.title.trim()) { alert('Vui lòng nhập tiêu đề bài tập'); return; }
-    if (questions.some(q => !q.content.trim())) { alert('Vui lòng nhập nội dung tất cả câu hỏi'); return; }
+    if (!form.title.trim()) { toast.error('Vui lòng nhập tiêu đề bài tập'); return; }
+    if (questions.some(q => !q.content.trim())) { toast.error('Vui lòng nhập nội dung tất cả câu hỏi'); return; }
 
     setSaving(true);
     try {
@@ -237,7 +238,7 @@ const CreateAssignmentTab = () => {
       setQuestions([{ content: '', type: 'multiple_choice', correct_answer: '', options: ['', '', '', ''], points: 1 }]);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
-      alert('Lỗi: ' + err.message);
+      toast.error('Lỗi: ' + err.message);
     }
     setSaving(false);
   };
@@ -400,7 +401,7 @@ const GradeTab = () => {
 
   const saveFeedback = async (submissionId) => {
     await supabase.from('submissions').update({ teacher_feedback: feedbacks[submissionId] }).eq('id', submissionId);
-    alert('Đã lưu nhận xét!');
+    toast.success('Đã lưu nhận xét! ✅');
   };
 
   if (loading) return <div className="text-center py-12 text-gray-400">Đang tải...</div>;

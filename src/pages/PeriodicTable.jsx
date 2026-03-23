@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ELEMENTS, LANTHANIDE_MARKER, ACTINIDE_MARKER, CATEGORY_COLORS } from '../lib/chemData';
-import { X, Atom } from 'lucide-react';
 
 const ElementCell = ({ el, onClick, isMarker }) => {
   const colors = CATEGORY_COLORS[el.category] || { bg: 'bg-gray-100', border: 'border-gray-300', text: 'text-gray-800' };
@@ -36,50 +35,37 @@ const ElementModal = ({ el, onClose }) => {
   const colors = CATEGORY_COLORS[el.category] || {};
   
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 relative" onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-red-50 transition-colors">
-          <X className="w-6 h-6" />
-        </button>
-
-        <div className="flex items-start gap-6 mb-6">
-          <div className={`w-28 h-28 ${colors.bg} ${colors.border} border-4 rounded-2xl flex flex-col items-center justify-center shrink-0`}>
-            <span className="text-xs font-bold opacity-40">{el.z}</span>
-            <span className={`text-5xl font-black ${colors.text}`}>{el.symbol}</span>
+    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="retro-window max-w-lg w-full" onClick={e => e.stopPropagation()}>
+        <div className="retro-titlebar">
+          <span className="title">⚛️ {el.name} ({el.symbol})</span>
+          <div className="window-controls">
+            <span className="min-btn" /><span className="max-btn" />
+            <span className="close-btn" onClick={onClose} />
           </div>
-          <div>
-            <h2 className="text-2xl font-black text-gray-900">{el.name}</h2>
-            <p className="text-sm text-gray-400 font-medium">{el.nameEn}</p>
-            <div className={`inline-flex mt-2 px-3 py-1 rounded-full text-xs font-bold ${colors.bg} ${colors.text} ${colors.border} border`}>
-              {CATEGORY_COLORS[el.category]?.label || el.category}
+        </div>
+        <div className="retro-body">
+          <div className="flex items-start gap-5 mb-5">
+            <div className={`w-24 h-24 ${colors.bg} ${colors.border} border-2 rounded-xl flex flex-col items-center justify-center shrink-0`}>
+              <span className="text-xs font-bold opacity-40">{el.z}</span>
+              <span className={`text-4xl font-black ${colors.text}`}>{el.symbol}</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-os-text">{el.name}</h2>
+              <p className="text-sm text-os-text-muted">{el.nameEn}</p>
+              <div className={`inline-flex mt-2 px-2.5 py-0.5 rounded border-2 text-[10px] font-black uppercase ${colors.bg} ${colors.text} ${colors.border}`}>
+                {CATEGORY_COLORS[el.category]?.label || el.category}
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-50 rounded-xl p-4">
-            <h3 className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Số hiệu nguyên tử</h3>
-            <p className="text-xl font-black text-gray-800">{el.z}</p>
+          <div className="grid grid-cols-2 gap-3">
+            {[{ l: 'Số hiệu', v: el.z }, { l: 'Khối lượng', v: `${el.mass} u` }, { l: 'Chu kỳ', v: el.row <= 7 ? el.row : (el.row === 9 ? 6 : 7) }, { l: 'Nhóm', v: el.col <= 18 ? el.col : '—' }].map(i => (
+              <div key={i.l} className="bg-os-bg-light border-2 border-os-border rounded-lg p-3">
+                <p className="text-[10px] uppercase font-black text-os-text-muted tracking-wider mb-0.5">{i.l}</p>
+                <p className="text-lg font-black text-os-text">{i.v}</p>
+              </div>
+            ))}
           </div>
-          <div className="bg-gray-50 rounded-xl p-4">
-            <h3 className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Khối lượng nguyên tử</h3>
-            <p className="text-xl font-black text-gray-800">{el.mass} <span className="text-sm font-normal text-gray-500">u</span></p>
-          </div>
-          <div className="bg-gray-50 rounded-xl p-4">
-            <h3 className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Chu kỳ</h3>
-            <p className="text-xl font-black text-gray-800">{el.row <= 7 ? el.row : (el.row === 9 ? 6 : 7)}</p>
-          </div>
-          <div className="bg-gray-50 rounded-xl p-4">
-            <h3 className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Nhóm</h3>
-            <p className="text-xl font-black text-gray-800">{el.col <= 18 ? el.col : '—'}</p>
-          </div>
-        </div>
-
-        <div className="mt-4 bg-sky-50 border border-sky-200 rounded-xl p-4">
-          <h3 className="text-xs uppercase font-bold text-sky-600 tracking-wider mb-2">Ghi chú</h3>
-          <p className="text-sm text-sky-800 leading-relaxed">
-            Thông tin chi tiết về tính chất vật lý, hóa học, và các phản ứng tiêu biểu của {el.name} ({el.symbol}) sẽ được cập nhật từ cơ sở dữ liệu Supabase.
-          </p>
         </div>
       </div>
     </div>
@@ -95,16 +81,8 @@ export const PeriodicTable = () => {
   const actinides = ELEMENTS.filter(el => el.row === 10);
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="bg-gradient-to-br from-sky-500 to-emerald-500 p-2.5 rounded-xl">
-          <Atom className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <h1 className="text-2xl md:text-3xl font-black text-gray-900">Bảng Tuần Hoàn Nguyên Tố</h1>
-          <p className="text-sm text-gray-500">Nhấp vào nguyên tố để xem chi tiết</p>
-        </div>
-      </div>
+    <div>
+      <p className="text-xs text-os-text-muted mb-3">Nhấp vào nguyên tố để xem chi tiết</p>
 
       {/* Category Legend */}
       <div className="flex flex-wrap gap-2 mb-6">

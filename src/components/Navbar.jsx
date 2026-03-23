@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Beaker, Table, ClipboardList, CheckCircle, Trophy, Download, LogOut, Menu, X, LayoutDashboard } from 'lucide-react';
+import { Beaker, Table, ClipboardList, CheckCircle, Trophy, Download, LogOut, Menu, X, LayoutDashboard, Home, User } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, profile, signOut } = useAuth();
@@ -29,15 +29,16 @@ export const Navbar = () => {
   const handleLogout = async () => {
     await signOut();
     navigate('/auth');
+    window.location.reload();
   };
 
   const navItems = [
+    { path: '/dashboard', label: 'Tổng quan', icon: Home },
     { path: '/lab', label: 'Phòng TN', icon: Beaker },
-    { path: '/table', label: 'Bảng Tuần Hoàn', icon: Table },
+    { path: '/table', label: 'Bảng TH', icon: Table },
     { path: '/assignments', label: 'Bài Tập', icon: ClipboardList, alert: true },
-    { path: '/completed', label: 'Đã Làm', icon: CheckCircle },
     { path: '/leaderboard', label: 'Xếp Hạng', icon: Trophy },
-    ...(profile?.role === 'teacher' ? [{ path: '/teacher', label: 'Quản lý', icon: LayoutDashboard, isTeacher: true }] : []),
+    ...(profile?.role === 'teacher' ? [{ path: '/teacher', label: 'Quản lý', icon: LayoutDashboard }] : []),
   ];
 
   return (
@@ -92,9 +93,9 @@ export const Navbar = () => {
               </button>
             )}
 
-            {/* User Info */}
+            {/* User Info - Click to Profile */}
             {user && profile && (
-              <div className="hidden md:flex items-center gap-2 bg-white/50 py-1.5 px-3 rounded-full border border-gray-100 shadow-sm">
+              <NavLink to="/profile" className="hidden md:flex items-center gap-2 bg-white/50 py-1.5 px-3 rounded-full border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
                 <div className="text-right">
                   <p className="text-sm font-bold text-gray-800 leading-none mb-0.5">{profile.full_name}</p>
                   <div className="flex items-center justify-end gap-1">
@@ -110,7 +111,7 @@ export const Navbar = () => {
                     <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/></svg>
                   </div>
                 </div>
-              </div>
+              </NavLink>
             )}
 
             {/* Logout */}
@@ -151,9 +152,17 @@ export const Navbar = () => {
               );
             })}
             {user && (
-              <button onClick={handleLogout} className="flex items-center px-4 py-3 rounded-xl font-semibold text-red-500 hover:bg-red-50 w-full">
-                <LogOut className="w-5 h-5 mr-3" /> Đăng xuất
-              </button>
+              <>
+                <NavLink to="/completed" onClick={() => setMobileOpen(false)} className={({ isActive }) => `flex items-center px-4 py-3 rounded-xl font-semibold transition-all ${isActive ? 'bg-sky-100 text-sky-800' : 'text-gray-600 hover:bg-gray-50'}`}>
+                  <CheckCircle className="w-5 h-5 mr-3 opacity-70" /> Bài đã làm
+                </NavLink>
+                <NavLink to="/profile" onClick={() => setMobileOpen(false)} className={({ isActive }) => `flex items-center px-4 py-3 rounded-xl font-semibold transition-all ${isActive ? 'bg-sky-100 text-sky-800' : 'text-gray-600 hover:bg-gray-50'}`}>
+                  <User className="w-5 h-5 mr-3 opacity-70" /> Hồ sơ cá nhân
+                </NavLink>
+                <button onClick={handleLogout} className="flex items-center px-4 py-3 rounded-xl font-semibold text-red-500 hover:bg-red-50 w-full">
+                  <LogOut className="w-5 h-5 mr-3" /> Đăng xuất
+                </button>
+              </>
             )}
           </div>
         </div>

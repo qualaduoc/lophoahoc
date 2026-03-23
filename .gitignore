@@ -26,3 +26,22 @@ dist-ssr
 # Env files
 .env
 .env.*
+
+# Agent config
+.agent
+
+# ChemDoodle source package (reference only, active lib is in public/chemdoodle/)
+ChemDoodleWeb-11.0.0/
+
+# Ketcher sample project (reference only)
+e2724258-6ed9-4735-8ea8-02273588cb19/
+e2724258-6ed9-4735-8ea8-02273588cb19.zip
+
+# Stray images not used in app
+*.jfif
+
+# Test files (dev only)
+public/chemdoodle-test.html
+
+# Duplicate ChemDoodle minified copy
+public/chemdoodle/ChemDoodleWeb.min.js

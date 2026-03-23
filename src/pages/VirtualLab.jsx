@@ -5,6 +5,7 @@ import { MOL_DATA_3D } from '../lib/molData3D';
 import { loadChemDoodle } from '../lib/chemdoodleLoader';
 import { fetchMol3D } from '../lib/pubchemService';
 import MolView3D from '../components/MolView3D';
+import ReactionBalancer from '../features/virtual-lab/ReactionBalancer';
 import 'ketcher-react/dist/index.css';
 
 /* ═══════════════════════════════════════════════════
@@ -399,6 +400,7 @@ const Viewer3DPanel = ({ reaction, phase }) => {
    MAIN VIRTUAL LAB
    ═══════════════════════════════════════════════════ */
 export const VirtualLab = () => {
+  const [labTab, setLabTab] = useState('lab'); // 'lab' | 'balance'
   const [selectedReaction, setSelectedReaction] = useState(0);
   const [phase, setPhase] = useState('idle');
   const [showSketcher, setShowSketcher] = useState(false);
@@ -430,6 +432,27 @@ export const VirtualLab = () => {
 
   return (
     <div className="space-y-3">
+      {/* TAB SWITCHER */}
+      <div className="flex gap-2 border-2 border-os-border rounded-lg p-1.5 bg-os-bg-light">
+        <button onClick={() => setLabTab('lab')}
+          className={`flex-1 py-2 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
+            labTab === 'lab' ? 'bg-os-accent text-white shadow-sm' : 'text-os-text-muted hover:bg-os-bg'
+          }`}>
+          🔬 Thí Nghiệm Mô Phỏng
+        </button>
+        <button onClick={() => setLabTab('balance')}
+          className={`flex-1 py-2 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
+            labTab === 'balance' ? 'bg-os-accent text-white shadow-sm' : 'text-os-text-muted hover:bg-os-bg'
+          }`}>
+          ⚖️ Cân Bằng Phương Trình
+        </button>
+      </div>
+
+      {/* TAB: Reaction Balancer */}
+      {labTab === 'balance' && <ReactionBalancer />}
+
+      {/* TAB: Lab Simulation */}
+      {labTab === 'lab' && <>
       {/* ROW 1: Lab 2D + Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
         {/* LEFT: Lab 2D */}
@@ -549,6 +572,7 @@ export const VirtualLab = () => {
           )}
         </div>
       </div>
+    </>}
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 // ===== ASSIGNMENT LIST PAGE =====
 export const Assignments = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [assignments, setAssignments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,15 @@ export const Assignments = () => {
         supabase.from('assignments').select('*').eq('is_published', true).order('created_at', { ascending: false }),
         supabase.from('submissions').select('*').eq('student_id', user.id),
       ]);
-      setAssignments(assignData || []);
+
+      // Filter: chỉ hiện bài tập dành cho lớp của học sinh (hoặc bài không giới hạn lớp)
+      const myClass = profile?.class_name?.trim()?.toLowerCase() || '';
+      const filtered = (assignData || []).filter(a => {
+        if (!a.target_class) return true; // Không giới hạn → hiện cho tất cả
+        return a.target_class.trim().toLowerCase() === myClass;
+      });
+
+      setAssignments(filtered);
       setSubmissions(subData || []);
     } catch (err) { console.error(err); }
     setLoading(false);
@@ -72,9 +80,10 @@ export const Assignments = () => {
             const sub = getSubmission(a.id);
             const isCompleted = sub?.is_completed;
             const isCheated = sub?.cheat_flags >= 2;
+            const isExpired = a.due_date && new Date(a.due_date) < new Date();
 
             return (
-              <div key={a.id} className={`border-2 border-os-border rounded-lg p-4 bg-os-bg-light transition-all hover:shadow-md ${isCompleted ? 'opacity-75' : ''}`}>
+              <div key={a.id} className={`border-2 border-os-border rounded-lg p-4 bg-os-bg-light transition-all hover:shadow-md ${isCompleted || isExpired ? 'opacity-75' : ''}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -89,7 +98,10 @@ export const Assignments = () => {
                       {isCheated && (
                         <span className="px-2 py-0.5 rounded border text-[10px] font-black bg-red-50 text-red-700 border-red-200">🚫 Gian lận</span>
                       )}
-                      {!isCompleted && !sub && (
+                      {isExpired && !isCompleted && (
+                        <span className="px-2 py-0.5 rounded border text-[10px] font-black bg-red-50 text-red-600 border-red-200">⏰ Hết hạn</span>
+                      )}
+                      {!isCompleted && !sub && !isExpired && (
                         <span className="relative flex h-2.5 w-2.5">
                           <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75" />
                           <span className="relative rounded-full h-2.5 w-2.5 bg-red-500" />
@@ -98,9 +110,14 @@ export const Assignments = () => {
                     </div>
                     <h3 className="font-bold text-os-text mb-1">{a.title}</h3>
                     {a.description && <p className="text-xs text-os-text-muted mb-1.5">{a.description}</p>}
-                    <div className="flex items-center gap-3 text-[11px] text-os-text-muted">
+                    <div className="flex items-center gap-3 text-[11px] text-os-text-muted flex-wrap">
                       {a.time_limit_minutes && <span>⏱ {a.time_limit_minutes} phút</span>}
-                      {a.due_date && <span>📅 Hạn: {new Date(a.due_date).toLocaleDateString('vi-VN')}</span>}
+                      {a.due_date && (
+                        <span className={isExpired ? 'text-red-500 font-bold' : ''}>
+                          📅 Hạn: {new Date(a.due_date).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      )}
+                      {a.target_class && <span>🎯 Lớp {a.target_class}</span>}
                       {isCompleted && sub?.score !== null && (
                         <span className="font-black text-os-green">💯 {sub.score}/{sub.total_points}</span>
                       )}
@@ -108,14 +125,14 @@ export const Assignments = () => {
                   </div>
                   <button
                     onClick={() => startQuiz(a)}
-                    disabled={isCompleted}
+                    disabled={isCompleted || isExpired}
                     className={`shrink-0 text-sm ${
-                      isCompleted
+                      isCompleted || isExpired
                         ? 'retro-btn opacity-50 cursor-not-allowed'
                         : 'retro-btn retro-btn-primary'
                     }`}
                   >
-                    {isCompleted ? 'Đã nộp' : sub ? '▶ Tiếp tục' : '▶ Làm bài'}
+                    {isCompleted ? 'Đã nộp' : isExpired ? '⏰ Hết hạn' : sub ? '▶ Tiếp tục' : '▶ Làm bài'}
                   </button>
                 </div>
               </div>

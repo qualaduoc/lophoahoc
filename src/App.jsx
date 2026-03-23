@@ -37,6 +37,60 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// ===== TEACHER ROUTE — Chỉ cho role=teacher truy cập =====
+const TeacherRoute = ({ children }) => {
+  const { user, profile, loading } = useAuth();
+  const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <div className="desktop-bg flex items-center justify-center">
+        <div className="retro-window w-72">
+          <div className="retro-titlebar">
+            <span className="title">ChemEd OS</span>
+            <div className="window-controls">
+              <span className="min-btn" /><span className="max-btn" /><span className="close-btn" />
+            </div>
+          </div>
+          <div className="retro-body text-center py-8">
+            <p className="text-2xl mb-3 animate-pulse">⏳</p>
+            <p className="text-sm font-bold text-os-text-muted">Đang kiểm tra quyền...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/auth" />;
+  if (profile?.role !== 'teacher') {
+    return (
+      <div className="desktop-bg flex items-center justify-center">
+        <div className="retro-window w-80">
+          <div className="retro-titlebar">
+            <span className="title">🚫 Không có quyền</span>
+            <div className="window-controls">
+              <span className="close-btn" onClick={() => navigate('/')} />
+            </div>
+          </div>
+          <div className="retro-body text-center py-8">
+            <p className="text-3xl mb-3">🔒</p>
+            <p className="text-sm font-bold text-os-text mb-1">Khu vực dành cho Giáo viên</p>
+            <p className="text-xs text-os-text-muted mb-4">Bạn cần quyền <b>Teacher</b> để truy cập trang này.</p>
+            <button onClick={() => navigate('/')} className="retro-btn retro-btn-primary text-sm px-4 py-2">🏠 Về trang chủ</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return children;
+};
+
+// ===== SMART DASHBOARD — Tự nhận diện role =====
+const SmartDashboard = () => {
+  const { profile } = useAuth();
+  if (profile?.role === 'teacher') return <TeacherDashboard />;
+  return <StudentDashboard />;
+};
+
 // ===== DESKTOP ICONS CONFIG =====
 const DESKTOP_APPS = [
   { id: 'dashboard', path: '/dashboard', icon: '🏠', label: 'Tổng quan', color: 'bg-sky-100 border-sky-300' },
@@ -251,8 +305,8 @@ const AppRoutes = () => {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <DesktopLayout>
-            <WindowWrapper title="Tổng Quan" icon="🏠">
-              <StudentDashboard />
+            <WindowWrapper title={profile?.role === 'teacher' ? 'Bảng Điều Khiển Giáo Viên' : 'Tổng Quan'} icon={profile?.role === 'teacher' ? '🛡️' : '🏠'}>
+              <SmartDashboard />
             </WindowWrapper>
           </DesktopLayout>
         </ProtectedRoute>
@@ -312,13 +366,13 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       <Route path="/teacher" element={
-        <ProtectedRoute>
+        <TeacherRoute>
           <DesktopLayout>
             <WindowWrapper title="Bảng Điều Khiển Giáo Viên" icon="🛡️">
               <TeacherDashboard />
             </WindowWrapper>
           </DesktopLayout>
-        </ProtectedRoute>
+        </TeacherRoute>
       } />
       <Route path="*" element={<Navigate to="/auth" />} />
     </Routes>

@@ -1,4 +1,6 @@
-# Logs
+# ==============================================================================
+# Node.js and Package Manager Logs
+# ==============================================================================
 logs
 *.log
 npm-debug.log*
@@ -7,15 +9,21 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# ==============================================================================
+# Dependency directories
+# ==============================================================================
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# Editor directories and files
+# ==============================================================================
+# Editor and IDE configurations
+# ==============================================================================
 .vscode/*
 !.vscode/extensions.json
-.idea
+!.vscode/settings.json
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -23,25 +31,25 @@ dist-ssr
 *.sln
 *.sw?
 
-# Env files
+# ==============================================================================
+# Environment variables (Never commit these!)
+# ==============================================================================
 .env
 .env.*
+!.env.example
 
-# Agent config
+# ==============================================================================
+# AI Agent & Configuration (Do not upload to Vercel/Hosting)
+# ==============================================================================
+.agent/
 .agent
 
-# ChemDoodle source package (reference only, active lib is in public/chemdoodle/)
+# ==============================================================================
+# Reference Projects & Temporary files (Not needed for deployment)
+# ==============================================================================
 ChemDoodleWeb-11.0.0/
-
-# Ketcher sample project (reference only)
 e2724258-6ed9-4735-8ea8-02273588cb19/
-e2724258-6ed9-4735-8ea8-02273588cb19.zip
-
-# Stray images not used in app
+*.zip
 *.jfif
-
-# Test files (dev only)
 public/chemdoodle-test.html
-
-# Duplicate ChemDoodle minified copy
 public/chemdoodle/ChemDoodleWeb.min.js

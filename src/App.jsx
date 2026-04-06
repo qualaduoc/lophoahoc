@@ -11,6 +11,7 @@ import { Leaderboard } from './pages/Leaderboard';
 import { StudentDashboard } from './pages/StudentDashboard';
 import { Profile } from './pages/Profile';
 import { TeacherDashboard } from './pages/TeacherDashboard';
+import { OrganicChemistry } from './pages/OrganicChemistry';
 
 // ===== PROTECTED ROUTE =====
 const ProtectedRoute = ({ children }) => {
@@ -100,6 +101,7 @@ const DESKTOP_APPS = [
   { id: 'completed', path: '/completed', icon: '✅', label: 'Đã Làm', color: 'bg-green-100 border-green-300' },
   { id: 'leaderboard', path: '/leaderboard', icon: '🏆', label: 'Xếp Hạng', color: 'bg-yellow-100 border-yellow-300' },
   { id: 'profile', path: '/profile', icon: '👤', label: 'Hồ Sơ', color: 'bg-pink-100 border-pink-300' },
+  { id: 'organic', path: '/organic', icon: '⬡', label: 'Hóa Hữu Cơ', color: 'bg-teal-100 border-teal-300' },
 ];
 
 const TEACHER_APP = { id: 'teacher', path: '/teacher', icon: '🛡️', label: 'Quản Lý', color: 'bg-purple-100 border-purple-300' };
@@ -325,6 +327,15 @@ const AppRoutes = () => {
           <DesktopLayout>
             <WindowWrapper title="Bảng Tuần Hoàn Nguyên Tố" icon="⚛️">
               <PeriodicTable />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/organic" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Học Tập: Hóa Hữu Cơ Lớp 9" icon="⬡">
+              <OrganicChemistry />
             </WindowWrapper>
           </DesktopLayout>
         </ProtectedRoute>

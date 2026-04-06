@@ -58,7 +58,14 @@ export const MOL_DATA = {
   'Fe(OH)3': 'Fe(OH)3\n  ChemEd  01012025\n\n  7  6  0  0  0  0  0  0  0  0  1 V2000\n    0.0000    0.0000    0.0000 Fe  0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.8660    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.8660    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.7321    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.3000    1.3660    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3000    1.3660    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.7321    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0  0  0  0\n  1  3  1  0  0  0  0\n  1  4  1  0  0  0  0\n  2  5  1  0  0  0  0\n  3  6  1  0  0  0  0\n  4  7  1  0  0  0  0\nM  END',
 
   Na2CO3: 'Na2CO3\n  ChemEd  01012025\n\n  6  5  0  0  0  0  0  0  0  0  1 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000    0.5774    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.5774    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.1547    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2000    0.5774    0.0000 Na  0  0  0  0  0  0  0  0  0  0  0  0\n    2.2000    0.5774    0.0000 Na  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0  0  0  0\n  1  3  1  0  0  0  0\n  1  4  2  0  0  0  0\n  2  5  1  0  0  0  0\n  3  6  1  0  0  0  0\nM  END',
+
+  'CH4+O2': ['CO2', 'H2O'],
+  'C2H4+Br2': ['C2H4Br2'],
+  'C2H5OH+Na': ['C2H5ONa', 'H2'],
+  'CH3COOH+CaCO3': ['(CH3COO)2Ca', 'H2O', 'CO2'],
+  'CH3COOH+NaOH': ['CH3COONa', 'H2O'],
 };
+
 
 // Product molecules for each reaction
 export const REACTION_PRODUCTS = {
@@ -74,4 +81,11 @@ export const REACTION_PRODUCTS = {
   'CuSO4+Fe': ['FeSO4', 'Cu'],
   'NaOH+FeCl3': ['Fe(OH)3', 'NaCl'],
   'Na2CO3+HCl': ['NaCl', 'H2O', 'CO2'],
+
+  'CH4+O2': ['CO2', 'H2O'],
+  'C2H4+Br2': ['C2H4Br2'],
+  'C2H5OH+Na': ['C2H5ONa', 'H2'],
+  'CH3COOH+CaCO3': ['(CH3COO)2Ca', 'H2O', 'CO2'],
+  'CH3COOH+NaOH': ['CH3COONa', 'H2O'],
 };
+

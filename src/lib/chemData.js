@@ -151,6 +151,7 @@ export const CATEGORY_COLORS = {
 
 export const REACTIONS_DATA = [
   {
+    category: 'inorganic',
     reactantA: 'HCl', reactantAName: 'Dung dịch HCl (Axit clohidric)',
     reactantB: 'CaCO3', reactantBName: 'CaCO₃ (Canxi cacbonat)',
     equation: '2HCl + CaCO₃ → CaCl₂ + H₂O + CO₂↑',
@@ -164,6 +165,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'NaOH', reactantAName: 'Dung dịch NaOH (Natri hidroxit)',
     reactantB: 'HCl', reactantBName: 'Dung dịch HCl (Axit clohidric)',
     equation: 'NaOH + HCl → NaCl + H₂O',
@@ -175,6 +177,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'H2SO4', reactantAName: 'Dung dịch H₂SO₄ loãng (Axit sunfuric)',
     reactantB: 'Fe', reactantBName: 'Fe (Sắt)',
     equation: 'Fe + H₂SO₄ → FeSO₄ + H₂↑',
@@ -188,6 +191,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'NaOH', reactantAName: 'Dung dịch NaOH (Natri hidroxit)',
     reactantB: 'CuSO4', reactantBName: 'Dung dịch CuSO₄ (Đồng sunfat)',
     equation: '2NaOH + CuSO₄ → Cu(OH)₂↓ + Na₂SO₄',
@@ -200,6 +204,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'AgNO3', reactantAName: 'Dung dịch AgNO₃ (Bạc nitrat)',
     reactantB: 'NaCl', reactantBName: 'Dung dịch NaCl (Natri clorua)',
     equation: 'AgNO₃ + NaCl → AgCl↓ + NaNO₃',
@@ -212,6 +217,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'Na', reactantAName: 'Na (Natri kim loại)',
     reactantB: 'H2O', reactantBName: 'H₂O (Nước)',
     equation: '2Na + 2H₂O → 2NaOH + H₂↑',
@@ -225,6 +231,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'BaCl2', reactantAName: 'Dung dịch BaCl₂ (Bari clorua)',
     reactantB: 'H2SO4', reactantBName: 'Dung dịch H₂SO₄ (Axit sunfuric)',
     equation: 'BaCl₂ + H₂SO₄ → BaSO₄↓ + 2HCl',
@@ -237,6 +244,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'Zn', reactantAName: 'Zn (Kẽm)',
     reactantB: 'HCl', reactantBName: 'Dung dịch HCl (Axit clohidric)',
     equation: 'Zn + 2HCl → ZnCl₂ + H₂↑',
@@ -250,6 +258,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'Mg', reactantAName: 'Mg (Magie)',
     reactantB: 'HCl', reactantBName: 'Dung dịch HCl (Axit clohidric)',
     equation: 'Mg + 2HCl → MgCl₂ + H₂↑',
@@ -263,6 +272,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'CuSO4', reactantAName: 'Dung dịch CuSO₄ (Đồng sunfat)',
     reactantB: 'Fe', reactantBName: 'Fe (Đinh sắt)',
     equation: 'CuSO₄ + Fe → FeSO₄ + Cu↓',
@@ -276,6 +286,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'NaOH', reactantAName: 'Dung dịch NaOH (Natri hidroxit)',
     reactantB: 'FeCl3', reactantBName: 'Dung dịch FeCl₃ (Sắt(III) clorua)',
     equation: '3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl',
@@ -288,6 +299,7 @@ export const REACTIONS_DATA = [
     },
   },
   {
+    category: 'inorganic',
     reactantA: 'Na2CO3', reactantAName: 'Dung dịch Na₂CO₃ (Natri cacbonat)',
     reactantB: 'HCl', reactantBName: 'Dung dịch HCl (Axit clohidric)',
     equation: 'Na₂CO₃ + 2HCl → 2NaCl + H₂O + CO₂↑',
@@ -297,6 +309,73 @@ export const REACTIONS_DATA = [
       colorA: '#f5f5f5', colorB: '#e8f5e9', resultColor: '#f5f5f5',
       effects: ['bubbles'], bubbleColor: 'rgba(200,200,200,0.6)',
       emoji: '🫧', gasLabel: 'CO₂↑',
+    },
+  },
+
+  {
+    category: 'organic',
+    reactantA: 'CH4', reactantAName: 'Khí Methane',
+    reactantB: 'O2', reactantBName: 'Khí Oxi',
+    equation: 'CH₄ + 2O₂ → (t°) CO₂ + 2H₂O',
+    phenomenon: 'Khí CH₄ cháy với ngọn lửa màu xanh nhạt, tỏa rất nhiều nhiệt.',
+    conditions: 'Đốt cháy ở nhiệt độ cao',
+    visual: {
+      colorA: '#e0f7fa', colorB: '#ffcdd2', resultColor: '#f5f5f5',
+      effects: ['fire', 'heat'],
+      emoji: '🔥', gasLabel: 'CO₂↑', intense: true,
+    },
+  },
+  {
+    category: 'organic',
+    reactantA: 'C2H4', reactantAName: 'Khí Ethylene',
+    reactantB: 'Br2', reactantBName: 'Dung dịch Bromine (Br₂)',
+    equation: 'C₂H₄ + Br₂ → C₂H₄Br₂',
+    phenomenon: 'Dung dịch Bromine (màu nâu đỏ) bị nhạt màu và mất màu hoàn toàn.',
+    conditions: 'Nhiệt độ thường',
+    visual: {
+      colorA: '#e0f7fa', colorB: '#ffb74d', resultColor: '#f5f5f5',
+      effects: ['colorChange'],
+      emoji: '🧪',
+    },
+  },
+  {
+    category: 'organic',
+    reactantA: 'C2H5OH', reactantAName: 'Rượu Ethylic (C₂H₅OH)',
+    reactantB: 'Na', reactantBName: 'Kim loại Natri (Na)',
+    equation: '2C₂H₅OH + 2Na → 2C₂H₅ONa + H₂↑',
+    phenomenon: 'Mẩu Na tan dần, chuyển động, có sủi bọt khí không màu (H₂).',
+    conditions: 'Nhiệt độ thường, rượu khan',
+    visual: {
+      colorA: '#e3f2fd', colorB: '#e0e0e0', resultColor: '#bbdefb',
+      solidB: true, solidBColor: '#9e9e9e', solidBLabel: 'Na',
+      effects: ['bubbles', 'heat'], bubbleColor: 'rgba(255,255,255,0.7)',
+      emoji: '🫧', gasLabel: 'H₂↑',
+    },
+  },
+  {
+    category: 'organic',
+    reactantA: 'CH3COOH', reactantAName: 'Acetic Acid (CH₃COOH)',
+    reactantB: 'CaCO3', reactantBName: 'Bột đá vôi (CaCO₃)',
+    equation: '2CH₃COOH + CaCO₃ → (CH₃COO)₂Ca + H₂O + CO₂↑',
+    phenomenon: 'Bột đá vôi sủi bọt khí li ti mạnh, tan dần trong dung dịch Axit.',
+    conditions: 'Nhiệt độ thường',
+    visual: {
+      colorA: '#f3e5f5', colorB: '#e0e0e0', resultColor: '#f3e5f5',
+      solidB: true, solidBColor: '#bdbdbd', solidBLabel: 'CaCO₃',
+      effects: ['bubbles'], bubbleColor: 'rgba(200,200,200,0.6)',
+      emoji: '💭', gasLabel: 'CO₂↑',
+    },
+  },
+  {
+    category: 'organic',
+    reactantA: 'CH3COOH', reactantAName: 'Acetic Acid (CH₃COOH)',
+    reactantB: 'NaOH', reactantBName: 'Dung dịch NaOH',
+    equation: 'CH₃COOH + NaOH → CH₃COONa + H₂O',
+    phenomenon: 'Phản ứng trung hòa diễn ra mãnh liệt, dung dịch nóng nhẹ.',
+    conditions: 'Nhiệt độ thường',
+    visual: {
+      colorA: '#f3e5f5', colorB: '#bbdefb', resultColor: '#e8eaf6',
+      effects: ['heat'], emoji: '🌡️',
     },
   },
 ];

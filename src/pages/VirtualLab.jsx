@@ -401,6 +401,7 @@ const Viewer3DPanel = ({ reaction, phase }) => {
    ═══════════════════════════════════════════════════ */
 export const VirtualLab = () => {
   const [labTab, setLabTab] = useState('lab'); // 'lab' | 'balance'
+  const [reactionCategory, setReactionCategory] = useState('all'); // 'all' | 'inorganic' | 'organic'
   const [selectedReaction, setSelectedReaction] = useState(0);
   const [phase, setPhase] = useState('idle');
   const [showSketcher, setShowSketcher] = useState(false);
@@ -408,6 +409,17 @@ export const VirtualLab = () => {
   const timerRef = useRef(null);
 
   const reaction = REACTIONS_DATA[selectedReaction];
+  
+  const filteredReactions = REACTIONS_DATA.map((r, i) => ({...r, originalIndex: i}))
+    .filter(r => reactionCategory === 'all' || r.category === reactionCategory);
+
+  // Automatically select the first reaction of the new category when switching
+  useEffect(() => {
+    if (filteredReactions.length > 0 && !filteredReactions.some(r => r.originalIndex === selectedReaction)) {
+      setSelectedReaction(filteredReactions[0].originalIndex);
+    }
+  }, [reactionCategory, selectedReaction, filteredReactions]);
+
 
   const handleReact = useCallback(() => {
     if (phase !== 'idle') return;
@@ -463,13 +475,12 @@ export const VirtualLab = () => {
                 🔬 Phòng Thí Nghiệm Ảo
               </h3>
               <div className="flex gap-1.5 items-center">
-                <span className="text-[8px] text-os-text-muted opacity-60">ChemDoodle</span>
-                {phase !== 'idle' && (
+                {reaction && phase !== 'idle' && (
                   <button onClick={handleReset} className="retro-btn text-[10px] py-1 px-2">🔄 Reset</button>
                 )}
               </div>
             </div>
-            <ReactionDisplay reaction={reaction} phase={phase} />
+            {reaction ? <ReactionDisplay reaction={reaction} phase={phase} /> : <div className="p-4 text-center text-sm text-os-text-muted">Không có thí nghiệm nào</div>}
           </div>
         </div>
 
@@ -477,14 +488,23 @@ export const VirtualLab = () => {
         <div className="lg:col-span-5 space-y-3">
           {/* Reaction Selector */}
           <div className="border-2 border-os-border rounded-lg overflow-hidden">
-            <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-1.5">
+            <div className="bg-os-titlebar border-b-2 border-os-border px-3 py-1.5 flex justify-between items-center">
               <h3 className="text-xs font-black text-os-text uppercase tracking-wider">⚗️ Chọn thí nghiệm</h3>
+              <select 
+                value={reactionCategory}
+                onChange={(e) => { setReactionCategory(e.target.value); handleReset(); }}
+                className="text-[10px] uppercase font-bold text-os-text-muted bg-white border border-os-border rounded px-1 py-0.5 outline-none cursor-pointer"
+              >
+                <option value="all">Tất cả</option>
+                <option value="inorganic">⚗️ Vô cơ</option>
+                <option value="organic">🌿 Hữu cơ</option>
+              </select>
             </div>
-            <div className="p-1.5 max-h-[220px] overflow-y-auto retro-body">
-              {REACTIONS_DATA.map((r, i) => (
-                <button key={i} onClick={() => handleSelect(i)}
+            <div className="p-1.5 max-h-[220px] overflow-y-auto retro-body modern-scrollbar">
+              {filteredReactions.map((r) => (
+                <button key={r.originalIndex} onClick={() => handleSelect(r.originalIndex)}
                   className={`w-full text-left p-2 rounded-lg border-2 mb-1 transition-all cursor-pointer ${
-                    selectedReaction === i
+                    selectedReaction === r.originalIndex
                       ? 'bg-os-accent/10 border-os-accent shadow-sm'
                       : 'border-transparent hover:bg-os-bg hover:border-os-border'
                   }`}>
@@ -494,7 +514,7 @@ export const VirtualLab = () => {
                       <p className="font-bold text-[11px] text-os-text truncate">{r.reactantA} + {r.reactantB}</p>
                       <p className="text-[9px] text-os-text-muted truncate">{r.equation}</p>
                     </div>
-                    {selectedReaction === i && <span className="text-os-accent font-black text-sm">✓</span>}
+                    {selectedReaction === r.originalIndex && <span className="text-os-accent font-black text-sm">✓</span>}
                   </div>
                 </button>
               ))}
@@ -507,33 +527,41 @@ export const VirtualLab = () => {
               <h3 className="text-xs font-black text-os-text uppercase tracking-wider">📋 Chất phản ứng</h3>
             </div>
             <div className="p-2 space-y-1.5">
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center gap-2 p-1.5 bg-os-bg-light rounded-lg border border-os-border/50">
-                  <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
-                    style={{ background: reaction.visual?.colorA || '#e0e0e0', border: '1px solid #0002' }}>A</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black text-os-text-muted uppercase">Chất A</p>
-                    <p className="text-[10px] font-bold text-os-text truncate">{reaction.reactantAName}</p>
+              {reaction ? (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-2 p-1.5 bg-os-bg-light rounded-lg border border-os-border/50">
+                      <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
+                        style={{ background: reaction.visual?.colorA || '#e0e0e0', border: '1px solid #0002' }}>A</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[9px] font-black text-os-text-muted uppercase">Chất A</p>
+                        <p className="text-[10px] font-bold text-os-text truncate">{reaction.reactantAName}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-1.5 bg-os-bg-light rounded-lg border border-os-border/50">
+                      <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
+                        style={{ background: reaction.visual?.colorB || '#e0e0e0', border: '1px solid #0002' }}>B</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[9px] font-black text-os-text-muted uppercase">Chất B</p>
+                        <p className="text-[10px] font-bold text-os-text truncate">{reaction.reactantBName}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2 p-1.5 bg-os-bg-light rounded-lg border border-os-border/50">
-                  <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
-                    style={{ background: reaction.visual?.colorB || '#e0e0e0', border: '1px solid #0002' }}>B</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black text-os-text-muted uppercase">Chất B</p>
-                    <p className="text-[10px] font-bold text-os-text truncate">{reaction.reactantBName}</p>
-                  </div>
-                </div>
-              </div>
 
-              <button onClick={handleReact} disabled={phase !== 'idle'}
-                className={`w-full retro-btn retro-btn-primary py-2.5 text-sm flex items-center justify-center gap-2 ${phase !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                {phase === 'idle' ? '⚗️ Tiến Hành Phản Ứng' :
-                 phase === 'pouring' ? '🫗 Đang trộn...' :
-                 phase === 'reacting' ? '⏳ Đang phản ứng...' : '✅ Hoàn thành!'}
-              </button>
-              {phase !== 'idle' && (
-                <button onClick={handleReset} className="w-full retro-btn py-1.5 text-sm">🔄 Thí nghiệm lại</button>
+                  <button onClick={handleReact} disabled={phase !== 'idle'}
+                    className={`w-full retro-btn retro-btn-primary py-2.5 text-sm flex items-center justify-center gap-2 ${phase !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    {phase === 'idle' ? '⚗️ Tiến Hành Phản Ứng' :
+                     phase === 'pouring' ? '🫗 Đang trộn...' :
+                     phase === 'reacting' ? '⏳ Đang phản ứng...' : '✅ Hoàn thành!'}
+                  </button>
+                  {phase !== 'idle' && (
+                    <button onClick={handleReset} className="w-full retro-btn py-1.5 text-sm">🔄 Thí nghiệm lại</button>
+                  )}
+                </>
+              ) : (
+                <div className="text-center text-sm text-os-text-muted py-6">
+                  Vui lòng chọn 1 thí nghiệm
+                </div>
               )}
             </div>
           </div>
@@ -551,8 +579,11 @@ export const VirtualLab = () => {
             </h3>
             <span className="text-os-text-muted text-xs">{show3D ? '▲ Ẩn' : '▼ Mở'}</span>
           </button>
-          {show3D && (
+          {show3D && reaction && (
             <Viewer3DPanel reaction={reaction} phase={phase} />
+          )}
+          {show3D && !reaction && (
+            <div className="p-4 text-center text-sm text-os-text-muted">Vui lòng chọn thí nghiệm để xem 3D</div>
           )}
         </div>
 

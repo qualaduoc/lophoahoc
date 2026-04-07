@@ -6,7 +6,7 @@ const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
 
 // Email Admin — luôn được ép role = teacher
-const ADMIN_EMAILS = ['nguyenthanhduocathy@gmail.com'];
+const ADMIN_EMAILS = ['nguyenthanhduocathy@gmail.com', 'hoanglinhdl20890@gmail.com'];
 
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
@@ -32,10 +32,18 @@ export const AuthProvider = ({ children }) => {
         .single();
 
       if (!error && data) {
-        if (isAdmin && data.role !== 'teacher') data.role = 'teacher';
+        if (isAdmin && data.role !== 'teacher') {
+          await supabase.from('users').update({ role: 'teacher' }).eq('id', userId);
+          data.role = 'teacher';
+        }
         console.log('[Auth] ✅ Profile:', data.role, data.full_name);
         setProfile(data);
         return data;
+      }
+
+      // Chỉ tạo mới nếu lỗi thực sự là do KHÔNG CÓ DỮ LIỆU (PGRST116)
+      if (error && error.code !== 'PGRST116') {
+        throw error;
       }
 
       console.warn('[Auth] ⚠️ No profile row, auto-creating...');

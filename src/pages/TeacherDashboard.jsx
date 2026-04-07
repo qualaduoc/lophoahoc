@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Users, PlusCircle, FileText, ClipboardCheck, AlertTriangle, Layers } from 'lucide-react';
+import { LayoutDashboard, Users, PlusCircle, FileText, ClipboardCheck, AlertTriangle, Layers, BarChart } from 'lucide-react';
 
 import OverviewTab from '../features/teacher-dashboard/OverviewTab';
 import StudentsTab from '../features/teacher-dashboard/StudentsTab';
@@ -8,6 +8,7 @@ import ManageAssignmentsTab from '../features/teacher-dashboard/ManageAssignment
 import GradeTab from '../features/teacher-dashboard/GradeTab';
 import CheatsTab from '../features/teacher-dashboard/CheatsTab';
 import ManageClassesTab from '../features/teacher-dashboard/ManageClassesTab';
+import StatsTab from '../features/teacher-dashboard/StatsTab';
 
 // ===== TEACHER DASHBOARD - Tab Navigation =====
 export const TeacherDashboard = () => {
@@ -20,6 +21,7 @@ export const TeacherDashboard = () => {
     { id: 'create', label: 'Tạo bài tập', icon: PlusCircle },
     { id: 'manage', label: 'Quản lý BT', icon: FileText },
     { id: 'grade', label: 'Chấm điểm', icon: ClipboardCheck },
+    { id: 'stats', label: 'Thống kê', icon: BarChart },
     { id: 'cheats', label: 'Gian lận', icon: AlertTriangle },
   ];
 
@@ -63,6 +65,7 @@ export const TeacherDashboard = () => {
       {activeTab === 'create' && <CreateAssignmentTab />}
       {activeTab === 'manage' && <ManageAssignmentsTab />}
       {activeTab === 'grade' && <GradeTab />}
+      {activeTab === 'stats' && <StatsTab />}
       {activeTab === 'cheats' && <CheatsTab />}
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -8,6 +8,15 @@ export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [form, setForm] = useState({ email: '', password: '', full_name: '', class_name: '' });
+  const [classesList, setClassesList] = useState([]);
+  
+  useEffect(() => {
+    import('../lib/supabase').then(({ supabase }) => {
+      supabase.from('classes').select('name').order('name').then(({ data }) => {
+        if (data) setClassesList(data.map(c => c.name));
+      });
+    });
+  }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -100,11 +109,15 @@ export const Auth = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-os-text-muted mb-1 uppercase tracking-wider">Lớp</label>
-                    <input
-                      type="text" name="class_name" value={form.class_name} onChange={handleChange}
-                      placeholder="VD: 12A1"
-                      className="retro-input"
-                    />
+                    <select
+                      name="class_name" value={form.class_name} onChange={handleChange}
+                      className="retro-input w-full"
+                    >
+                      <option value="">-- Chọn lớp học --</option>
+                      {classesList.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
                   </div>
                 </>
               )}

@@ -12,6 +12,13 @@ export const Profile = () => {
     parent_phone: profile?.parent_phone || '',
   });
   const [saving, setSaving] = useState(false);
+  const [classesList, setClassesList] = useState([]);
+
+  React.useEffect(() => {
+    supabase.from('classes').select('name').order('name').then(({ data }) => {
+      if (data) setClassesList(data.map(c => c.name));
+    });
+  }, []);
 
   const handleSave = async () => {
     if (!form.full_name.trim()) { toast.error('Họ tên không được để trống'); return; }
@@ -74,7 +81,16 @@ export const Profile = () => {
           </div>
           <div>
             <label className="block text-xs font-bold text-os-text-muted mb-1 uppercase tracking-wider">Lớp</label>
-            <input type="text" value={form.class_name} onChange={e => setForm({ ...form, class_name: e.target.value })} placeholder="VD: 12A1" className="retro-input" />
+            <select
+              value={form.class_name} 
+              onChange={e => setForm({ ...form, class_name: e.target.value })} 
+              className="retro-input w-full"
+            >
+              <option value="">-- Chọn lớp học --</option>
+              {classesList.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

@@ -27,7 +27,8 @@ export const Assignments = () => {
       const myClass = profile?.class_name?.trim()?.toLowerCase() || '';
       const filtered = (assignData || []).filter(a => {
         if (!a.target_class) return true; // Không giới hạn → hiện cho tất cả
-        return a.target_class.trim().toLowerCase() === myClass;
+        const targets = a.target_class.split(',').map(s => s.trim().toLowerCase());
+        return targets.includes(myClass);
       });
 
       setAssignments(filtered);

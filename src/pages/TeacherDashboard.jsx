@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Users, PlusCircle, FileText, ClipboardCheck, AlertTriangle } from 'lucide-react';
+import { LayoutDashboard, Users, PlusCircle, FileText, ClipboardCheck, AlertTriangle, Layers } from 'lucide-react';
 
 import OverviewTab from '../features/teacher-dashboard/OverviewTab';
 import StudentsTab from '../features/teacher-dashboard/StudentsTab';
@@ -7,6 +7,7 @@ import CreateAssignmentTab from '../features/teacher-dashboard/CreateAssignmentT
 import ManageAssignmentsTab from '../features/teacher-dashboard/ManageAssignmentsTab';
 import GradeTab from '../features/teacher-dashboard/GradeTab';
 import CheatsTab from '../features/teacher-dashboard/CheatsTab';
+import ManageClassesTab from '../features/teacher-dashboard/ManageClassesTab';
 
 // ===== TEACHER DASHBOARD - Tab Navigation =====
 export const TeacherDashboard = () => {
@@ -14,6 +15,7 @@ export const TeacherDashboard = () => {
 
   const tabs = [
     { id: 'overview', label: 'Tổng quan', icon: LayoutDashboard },
+    { id: 'classes', label: 'Quản lý Lớp', icon: Layers },
     { id: 'students', label: 'Danh sách HS', icon: Users },
     { id: 'create', label: 'Tạo bài tập', icon: PlusCircle },
     { id: 'manage', label: 'Quản lý BT', icon: FileText },
@@ -34,14 +36,14 @@ export const TeacherDashboard = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex flex-wrap gap-2 mb-6">
         {tabs.map(tab => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
                 activeTab === tab.id
                   ? 'bg-purple-100 text-purple-800 shadow-sm'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
@@ -56,6 +58,7 @@ export const TeacherDashboard = () => {
 
       {/* Tab Content */}
       {activeTab === 'overview' && <OverviewTab />}
+      {activeTab === 'classes' && <ManageClassesTab />}
       {activeTab === 'students' && <StudentsTab />}
       {activeTab === 'create' && <CreateAssignmentTab />}
       {activeTab === 'manage' && <ManageAssignmentsTab />}

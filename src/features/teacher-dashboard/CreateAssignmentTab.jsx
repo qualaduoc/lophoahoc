@@ -20,6 +20,19 @@ const CreateAssignmentTab = () => {
   const [questions, setQuestions] = useState([
     { content: '', type: 'multiple_choice', correct_answer: '', options: ['', '', '', ''], points: 1 },
   ]);
+  const [classList, setClassList] = useState([]);
+  const [selectedClasses, setSelectedClasses] = useState([]);
+
+  React.useEffect(() => {
+    supabase.from('classes').select('name').order('name').then(({data}) => {
+      if (data) setClassList(data.map(c => c.name));
+    });
+  }, []);
+
+  const toggleClass = (c) => {
+    if (selectedClasses.includes(c)) setSelectedClasses(selectedClasses.filter(x => x !== c));
+    else setSelectedClasses([...selectedClasses, c]);
+  };
 
   const addQuestion = (type = 'multiple_choice') => {
     if (type === 'essay') {
@@ -62,7 +75,7 @@ const CreateAssignmentTab = () => {
           time_limit_minutes: form.time_limit_minutes,
           is_published: form.is_published,
           due_date: form.due_date || null,
-          target_class: form.target_class.trim() || null,
+          target_class: selectedClasses.length > 0 ? selectedClasses.join(',') : null,
         })
         .select()
         .single();
@@ -84,6 +97,7 @@ const CreateAssignmentTab = () => {
 
       setSaved(true);
       setForm({ title: '', description: '', type: 'quiz', time_limit_minutes: 30, is_published: false, due_date: '', target_class: '' });
+      setSelectedClasses([]);
       setQuestions([{ content: '', type: 'multiple_choice', correct_answer: '', options: ['', '', '', ''], points: 1 }]);
       setTimeout(() => setSaved(false), 3000);
       toast.success('Đã lưu bài tập thành công!');
@@ -159,9 +173,25 @@ const CreateAssignmentTab = () => {
               <label className="block text-sm font-semibold text-gray-600 mb-1 flex items-center gap-1.5">
                 <Target className="w-3.5 h-3.5" /> Giao cho lớp
               </label>
-              <input type="text" value={form.target_class} onChange={e => setForm({ ...form, target_class: e.target.value })}
-                placeholder="VD: 9A2 (trống = tất cả)"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none bg-white text-sm" />
+              <div className="w-full p-2.5 border border-gray-200 rounded-xl bg-white max-h-[120px] overflow-y-auto">
+                <div className="flex flex-wrap gap-2">
+                  {classList.length === 0 ? (
+                    <span className="text-xs text-gray-500">Chưa có lớp nào, vào "Quản lý Lớp" để thêm</span>
+                  ) : (
+                    classList.map(c => (
+                      <label key={c} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-sm cursor-pointer transition-all select-none ${
+                        selectedClasses.includes(c) ? 'bg-purple-50 text-purple-700 border-purple-200 font-bold' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                      }`}>
+                        <input type="checkbox" checked={selectedClasses.includes(c)}
+                          onChange={() => toggleClass(c)}
+                          className="w-3.5 h-3.5 accent-purple-600" />
+                        {c}
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-1 font-medium bg-gray-50 px-2 py-1 rounded inline-block">Trống = Giao cho tất cả các lớp</p>
             </div>
           </div>
         </div>

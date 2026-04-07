@@ -133,40 +133,8 @@ const LESSONS = [
     )
   },
   {
-    id: 'benzene',
-    title: '4. Benzene & Thơm (Arene)',
-    icon: <Pill size={18} />,
-    content: (
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-3 border-b-2 border-pink-200 pb-2">Cấu tạo Benzene (C₆H₆)</h3>
-          <p className="text-gray-700">
-            Cấu tạo mạch vòng 6 cạnh khép kín, trong đó có 3 liên kết đơn xen kẽ 3 liên kết đôi. Mạch vòng này rất bền bỉ (Hệ liên hợp thơm).
-          </p>
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-3 border-b-2 border-pink-200 pb-2">Tính chất hóa học</h3>
-          <p className="text-gray-700 mb-4 bg-pink-50 p-3 rounded border border-pink-100 text-sm">
-            Do cấu tạo vòng bền vững, Benzene <strong>không</strong> làm mất màu nước Br₂ ở điều kiện thường (khác Alkene). Nó vừa có tính chất của hydrocarbon no, vừa có tính cộng của hydrocarbon không no.
-          </p>
-          <div className="space-y-3">
-            <div className="border p-4 rounded">
-              <h4 className="font-bold">Hơi khó cộng, dễ thế</h4>
-              <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-700">
-                <li><strong>Phản ứng thế:</strong> Tác dụng với Br₂ lỏng (khác dung dịch Br₂) với xúc tác bột Sắt (Fe).<br/>
-                <span className="font-mono text-pink-700">C₆H₆ + Br₂ → (Fe, t°) C₆H₅Br (Bromobenzene) + HBr</span></li>
-                <li><strong>Phản ứng cộng:</strong> Cần điều kiện rất khắc nghiệt (nhiệt độ, áp suất, xúc tác Ni).<br/>
-                <span className="font-mono text-pink-700">C₆H₆ + 3H₂ → (Ni, t°) C₆H₁₂ (Cyclohexane)</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  },
-  {
     id: 'alcohol',
-    title: '5. Nguồn Hydrocarbon & Alcohol',
+    title: '4. Nguồn Hydrocarbon & Alcohol',
     icon: <Droplets size={18} />,
     content: (
       <div className="space-y-6">
@@ -197,7 +165,7 @@ const LESSONS = [
   },
   {
     id: 'acid',
-    title: '6. Acetic Acid (CH₃COOH)',
+    title: '5. Acetic Acid (CH₃COOH)',
     icon: <Beaker size={18} />,
     content: (
       <div className="space-y-6">
@@ -237,7 +205,7 @@ const LESSONS = [
   },
   {
     id: 'lipid-carbo',
-    title: '7. Lipid & Carbohydrate',
+    title: '6. Lipid & Carbohydrate',
     icon: <Leaf size={18} />,
     content: (
       <div className="space-y-6">
@@ -287,7 +255,7 @@ const LESSONS = [
   },
   {
     id: 'amino-protein',
-    title: '8. Protein & Polymer',
+    title: '7. Protein & Polymer',
     icon: <TestTube size={18} />,
     content: (
       <div className="space-y-6">
@@ -356,7 +324,7 @@ export const OrganicChemistry = () => {
         </div>
         <div className="bg-white p-4 border-t text-xs text-gray-500 text-center">
           <p>Chuyên đề THCS / THPT Quốc Gia</p>
-          <p className="font-bold mt-1 text-teal-600">8 Chuyên đề Lý thuyết</p>
+          <p className="font-bold mt-1 text-teal-600">7 Chuyên đề Lý thuyết</p>
         </div>
       </div>
 

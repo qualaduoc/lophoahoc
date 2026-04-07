@@ -13,6 +13,15 @@ import { Profile } from './pages/Profile';
 import { TeacherDashboard } from './pages/TeacherDashboard';
 import { OrganicChemistry } from './pages/OrganicChemistry';
 import { ChemicalBonds } from './pages/ChemicalBonds';
+import { GameHub } from './pages/GameHub';
+import { AlchemyGame } from './games/AlchemyGame';
+import { BondPuzzle } from './games/BondPuzzle';
+import { EquationInvaders } from './games/EquationInvaders';
+import { ElementMinesweeper } from './games/ElementMinesweeper';
+import { ArtilleryGame } from './games/ArtilleryGame';
+import { TurnBasedRPG } from './games/TurnBasedRPG';
+import { FlappyGame } from './games/FlappyGame';
+import { SnakeGame } from './games/SnakeGame';
 
 // ===== PROTECTED ROUTE =====
 const ProtectedRoute = ({ children }) => {
@@ -101,6 +110,7 @@ const DESKTOP_APPS = [
   { id: 'assignments', path: '/assignments', icon: '📝', label: 'Bài Tập', color: 'bg-indigo-100 border-indigo-300', badge: true },
   { id: 'completed', path: '/completed', icon: '✅', label: 'Đã Làm', color: 'bg-green-100 border-green-300' },
   { id: 'leaderboard', path: '/leaderboard', icon: '🏆', label: 'Xếp Hạng', color: 'bg-yellow-100 border-yellow-300' },
+  { id: 'games', path: '/games', icon: '🎮', label: 'Trò Chơi', color: 'bg-fuchsia-100 border-fuchsia-300' },
   { id: 'profile', path: '/profile', icon: '👤', label: 'Hồ Sơ', color: 'bg-pink-100 border-pink-300' },
   { id: 'bonds', path: '/bonds', icon: '🔗', label: 'Liên Kết Phân Tử', color: 'bg-rose-100 border-rose-300' },
   { id: 'organic', path: '/organic', icon: '⬡', label: 'Hóa Hữu Cơ', color: 'bg-teal-100 border-teal-300' },
@@ -374,6 +384,87 @@ const AppRoutes = () => {
           <DesktopLayout>
             <WindowWrapper title="Bảng Xếp Hạng" icon="🏆">
               <Leaderboard />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Đấu Trường Hóa Học" icon="🎮">
+              <GameHub />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/alchemy" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Thuật Sĩ Giả Kim" icon="🧪">
+              <AlchemyGame />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/bonds" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Kỹ Sư Liên Kết" icon="🧩">
+              <BondPuzzle />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/invaders" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Pháo Đài Phương Trình" icon="🚀">
+              <EquationInvaders />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/minesweeper" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Dò Mìn Tuần Hoàn" icon="🗺️">
+              <ElementMinesweeper />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/artillery" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Pháo Binh Tọa Độ" icon="🎯">
+              <ArtilleryGame />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/rpg" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Anh Hùng Viễn Chinh" icon="⚔️">
+              <TurnBasedRPG />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/flappy" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Flappy Bird" icon="🐦">
+              <FlappyGame />
+            </WindowWrapper>
+          </DesktopLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/games/snake" element={
+        <ProtectedRoute>
+          <DesktopLayout>
+            <WindowWrapper title="Rắn Săn Mồi" icon="🐍">
+              <SnakeGame />
             </WindowWrapper>
           </DesktopLayout>
         </ProtectedRoute>

@@ -22,6 +22,7 @@ import { ArtilleryGame } from './games/ArtilleryGame';
 import { TurnBasedRPG } from './games/TurnBasedRPG';
 import { FlappyGame } from './games/FlappyGame';
 import { SnakeGame } from './games/SnakeGame';
+import { FloatingChatbot } from './features/chatbot/FloatingChatbot';
 
 // ===== PROTECTED ROUTE =====
 const ProtectedRoute = ({ children }) => {
@@ -510,6 +511,7 @@ function App() {
             },
           }}
         />
+        <FloatingChatbot />
         <AppRoutes />
       </AuthProvider>
     </BrowserRouter>

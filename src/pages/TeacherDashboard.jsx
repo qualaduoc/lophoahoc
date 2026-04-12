@@ -9,6 +9,8 @@ import GradeTab from '../features/teacher-dashboard/GradeTab';
 import CheatsTab from '../features/teacher-dashboard/CheatsTab';
 import ManageClassesTab from '../features/teacher-dashboard/ManageClassesTab';
 import StatsTab from '../features/teacher-dashboard/StatsTab';
+import ChatbotSettingsTab from '../features/teacher-dashboard/ChatbotSettingsTab';
+import { BotMessageSquare } from 'lucide-react';
 
 // ===== TEACHER DASHBOARD - Tab Navigation =====
 export const TeacherDashboard = () => {
@@ -22,6 +24,7 @@ export const TeacherDashboard = () => {
     { id: 'manage', label: 'Quản lý BT', icon: FileText },
     { id: 'grade', label: 'Chấm điểm', icon: ClipboardCheck },
     { id: 'stats', label: 'Thống kê', icon: BarChart },
+    { id: 'chatbot', label: 'AI Chatbot', icon: BotMessageSquare },
     { id: 'cheats', label: 'Gian lận', icon: AlertTriangle },
   ];
 
@@ -64,9 +67,10 @@ export const TeacherDashboard = () => {
       {activeTab === 'students' && <StudentsTab />}
       {activeTab === 'create' && <CreateAssignmentTab />}
       {activeTab === 'manage' && <ManageAssignmentsTab />}
-      {activeTab === 'grade' && <GradeTab />}
-      {activeTab === 'stats' && <StatsTab />}
-      {activeTab === 'cheats' && <CheatsTab />}
+      { activeTab === 'grade' && <GradeTab /> }
+      { activeTab === 'stats' && <StatsTab /> }
+      { activeTab === 'chatbot' && <ChatbotSettingsTab /> }
+      { activeTab === 'cheats' && <CheatsTab /> }
     </div>
   );
 };

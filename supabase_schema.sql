@@ -178,3 +178,46 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ==========================================
+-- BẢNG CHO AI CHATBOT
+-- ==========================================
+
+-- 9. BẢNG CHATBOT_SETTINGS
+CREATE TABLE IF NOT EXISTS public.chatbot_settings (
+  id INTEGER PRIMARY KEY DEFAULT 1,
+  gemini_api_key TEXT,
+  daily_limit_per_student INTEGER DEFAULT 5,
+  greeting_message TEXT DEFAULT 'Chào em, thầy là AI trợ giảng Hóa Học. Em có câu hỏi gì bài học hôm nay không?',
+  system_prompt_additions TEXT DEFAULT '',
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+ALTER TABLE public.chatbot_settings ENABLE ROW LEVEL SECURITY;
+-- Mọi người (ai đã đăng nhập) đều có thể đọc để lấy config và api key
+DROP POLICY IF EXISTS "Anyone logged in can read chatbot settings" ON public.chatbot_settings;
+CREATE POLICY "Anyone logged in can read chatbot settings" ON public.chatbot_settings FOR SELECT USING (auth.role() = 'authenticated');
+-- Chỉ giáo viên mới được sửa
+DROP POLICY IF EXISTS "Teachers can update chatbot settings" ON public.chatbot_settings;
+CREATE POLICY "Teachers can update chatbot settings" ON public.chatbot_settings FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'teacher')
+);
+
+-- Khởi tạo settings mặc định nếu chưa có
+INSERT INTO public.chatbot_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+-- 10. BẢNG CHATBOT_LOGS
+CREATE TABLE IF NOT EXISTS public.chatbot_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  student_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  question TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+ALTER TABLE public.chatbot_logs ENABLE ROW LEVEL SECURITY;
+-- Dữ liệu logs chỉ cho giáo viên đọc tất cả, học sinh đọc của riêng mình
+DROP POLICY IF EXISTS "Students read own logs, teachers read all" ON public.chatbot_logs;
+CREATE POLICY "Students read own logs, teachers read all" ON public.chatbot_logs FOR SELECT USING (
+  student_id = auth.uid() OR EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'teacher')
+);
+-- Học sinh được insert log của mình
+DROP POLICY IF EXISTS "Students can insert own logs" ON public.chatbot_logs;
+CREATE POLICY "Students can insert own logs" ON public.chatbot_logs FOR INSERT WITH CHECK (student_id = auth.uid());
